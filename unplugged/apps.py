@@ -2,5 +2,5 @@ from django.apps import AppConfig as DjangoAppConfig
 
 
 class AppConfig(DjangoAppConfig):
-    name = 'unplugged'
-    verbose_name = 'Unplugged'
+    name = "unplugged"
+    verbose_name = "Unplugged"

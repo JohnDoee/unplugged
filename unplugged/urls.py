@@ -1,19 +1,29 @@
-from django.conf.urls import url
+import logging
+import re
 
-from rest_framework import routers
+logger = logging.getLogger(__name__)
 
-from .views import PluginModelView, PluginBaseListView, SimpleAdminPluginModelView, SimpleAdminTemplateModelView, \
-                   ShowAdminUrlsView, ScheduleModelView
 
-router = routers.SimpleRouter()
+def register_urlpatterns(urls):
+    logger.debug("Registering urls: %r" % (urls,))
+    urlpatterns.extend(urls)
 
-router.register(r'plugins', PluginModelView)
-router.register(r'pluginbases', PluginBaseListView, base_name='pluginbase')
-router.register(r'simpleadminplugins', SimpleAdminPluginModelView, base_name='simpleadmin_plugin')
-router.register(r'simpleadmintemplates', SimpleAdminTemplateModelView, base_name='simpleadmin_template')
 
-router.register(r'schedules', ScheduleModelView)
+def unregister_urlpattern(pattern):
+    logger.debug("Unregistering pattern: %s" % (pattern,))
+    pattern = re.compile(pattern)
+    for i, p in enumerate(urlpatterns):
+        if pattern == p.pattern.regex:
+            break
+    else:
+        return
 
-urlpatterns = [
-    url(r'^$', ShowAdminUrlsView.as_view(urls=router.urls)),
-] + router.urls
+    urlpatterns.pop(i)
+
+
+def clear_urlpatterns():
+    logger.debug("Clearing url patterns")
+    urlpatterns[:] = []
+
+
+urlpatterns = []

@@ -26,10 +26,10 @@ class PluginHandler:
         """
         plugin_type = plugin_interface.plugin_type
         if plugin_type in self.plugin_types:
-            logger.info('Trying to register duplicate plugin_type:%s' % (plugin_type, ))
+            logger.info(f"Trying to register duplicate plugin_type:{plugin_type}")
             return
 
-        logger.info('Registering plugin type: %r' % (plugin_type, ))
+        logger.info("Registering plugin type: %r" % (plugin_type,))
         self.plugin_types[plugin_type] = plugin_interface
         self.plugins[plugin_type] = {}
 
@@ -41,20 +41,22 @@ class PluginHandler:
         name = cls.plugin_name
 
         if not name:
-            raise AttributeError('Missing name')
+            raise AttributeError("Missing name")
 
         if plugin_type not in self.plugin_types:
-            logger.error('Unknown plugin type %s for plugin %s' % (plugin_type, name, ))
-            raise UnknownPluginTypeException("%s is not a known plugin type" % (plugin_type, ))
+            logger.error(f"Unknown plugin type {plugin_type} for plugin {name}")
+            raise UnknownPluginTypeException(
+                f"{plugin_type} is not a known plugin type"
+            )
 
         if not issubclass(cls, self.plugin_types[plugin_type]):
-            logger.error('%r is not a subclass of %r' % (name, plugin_type))
-            raise NotASubclassException('%r is not a subclass of %r' % (name, plugin_type))
+            logger.error(f"{name} is not a subclass of {plugin_type}")
+            raise NotASubclassException(f"{name} is not a subclass of {plugin_type}")
 
         if name in self.plugins[plugin_type]:
-            logger.warning('Double registering plugin %s of type %s' % (name, plugin_type, ))
+            logger.warning(f"Double registering plugin {name} of type {plugin_type}")
 
-        logger.info('Registering plugin %r of type %r' % (name, plugin_type))
+        logger.info(f"Registering plugin {name} of type {plugin_type}")
         self.plugins[plugin_type][name] = cls
 
     def get_all_plugins(self):
@@ -63,7 +65,9 @@ class PluginHandler:
                 yield plugin
 
     def get_plugins(self, plugin_type):
-        return sorted(self.plugins[plugin_type].values(), key=lambda x:getattr(x, 'priority', 0))
+        return sorted(
+            self.plugins[plugin_type].values(), key=lambda x: getattr(x, "priority", 0)
+        )
 
     def get_plugin_names(self, plugin_type):
         return self.plugins[plugin_type].keys()
@@ -73,5 +77,6 @@ class PluginHandler:
 
     def get_plugin_type(self, plugin_type):
         return self.plugins[plugin_type]
+
 
 pluginhandler = PluginHandler()

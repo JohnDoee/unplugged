@@ -1,10 +1,11 @@
-from marshmallow import SchemaOpts, fields, Schema as OriginalSchema
+from marshmallow import Schema as OriginalSchema
+from marshmallow import SchemaOpts, fields
 
 
 class UISchemaOpts(SchemaOpts):
     def __init__(self, meta, **kwargs):
         SchemaOpts.__init__(self, meta, **kwargs)
-        self.ui_schema = getattr(meta, 'ui_schema', {})
+        self.ui_schema = getattr(meta, "ui_schema", {})
 
 
 class Schema(OriginalSchema):

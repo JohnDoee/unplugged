@@ -1,0 +1,50 @@
+[
+  {
+    "fields": {
+      "enabled": true,
+      "config": "{}",
+      "name": "api",
+      "plugin_name": "api",
+      "plugin_type": "service",
+      "last_update": "2017-01-01T00:00:00.000Z"
+    },
+    "model": "unplugged.plugin",
+    "pk": 1
+  },
+  {
+    "fields": {
+      "enabled": true,
+      "config": "{}",
+      "name": "user",
+      "plugin_name": "user",
+      "plugin_type": "service",
+      "last_update": "2017-01-01T00:00:00.000Z"
+    },
+    "model": "unplugged.plugin",
+    "pk": 2
+  },
+  {
+    "fields": {
+      "enabled": true,
+      "config": "{}",
+      "name": "admin",
+      "plugin_name": "admin",
+      "plugin_type": "service",
+      "last_update": "2017-01-01T00:00:00.000Z"
+    },
+    "model": "unplugged.plugin",
+    "pk": 3
+  },
+  {
+    "fields": {
+      "enabled": true,
+      "config": "{}",
+      "name": "wamp",
+      "plugin_name": "wamp",
+      "plugin_type": "service",
+      "last_update": "2017-01-01T00:00:00.000Z"
+    },
+    "model": "unplugged.plugin",
+    "pk": 4
+  }
+]

@@ -5,30 +5,29 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('unplugged', '0005_auto_20190518_1557'),
-    ]
+    dependencies = [("unplugged", "0005_auto_20190518_1557")]
 
     operations = [
-        migrations.RemoveField(
-            model_name='schedule',
-            name='interval',
-        ),
+        migrations.RemoveField(model_name="schedule", name="interval"),
         migrations.AddField(
-            model_name='schedule',
-            name='method',
-            field=models.CharField(choices=[('cron', 'Cron'), ('interval', 'Interval')], default='cron', max_length=10),
+            model_name="schedule",
+            name="method",
+            field=models.CharField(
+                choices=[("cron", "Cron"), ("interval", "Interval")],
+                default="cron",
+                max_length=10,
+            ),
             preserve_default=False,
         ),
         migrations.AddField(
-            model_name='schedule',
-            name='method_config',
-            field=models.CharField(default='', max_length=500),
+            model_name="schedule",
+            name="method_config",
+            field=models.CharField(default="", max_length=500),
             preserve_default=False,
         ),
         migrations.AddField(
-            model_name='schedule',
-            name='plugin_unique_id',
+            model_name="schedule",
+            name="plugin_unique_id",
             field=models.CharField(db_index=True, max_length=100, null=True),
         ),
     ]

@@ -1,5 +1,4 @@
 import logging
-
 from abc import ABCMeta, abstractproperty
 
 from marshmallow import fields
@@ -12,8 +11,8 @@ logger = logging.getLogger(__name__)
 
 def register_plugin(cls):
     """Autoregisters the plugin with the handler"""
-    plugin_name = getattr(cls, 'plugin_name', None)
-    plugin_type = getattr(cls, 'plugin_type', None)
+    plugin_name = getattr(cls, "plugin_name", None)
+    plugin_type = getattr(cls, "plugin_type", None)
 
     if isinstance(plugin_type, str):
         if isinstance(plugin_name, str):
@@ -30,7 +29,7 @@ class PluginBaseMeta(ABCMeta, CommandBaseMeta):
 
     @property
     def pk(self):
-        return '%s:%s' % (self.plugin_type, self.plugin_name)
+        return "%s:%s" % (self.plugin_type, self.plugin_name)
 
 
 class PluginBase(metaclass=PluginBaseMeta):
@@ -82,33 +81,35 @@ class RelatedPluginField(fields.Field):
 
         plugins = Plugin.objects.filter(enabled=True)
 
-        plugin_type = getattr(self.metadata.get('plugin_type'), 'plugin_type', None)
+        plugin_type = getattr(self.metadata.get("plugin_type"), "plugin_type", None)
         if plugin_type:
             plugins = plugins.filter(plugin_type=plugin_type)
 
-        plugin_name = getattr(self.metadata.get('plugin_name'), 'plugin_name', None)
+        plugin_name = getattr(self.metadata.get("plugin_name"), "plugin_name", None)
         if plugin_name:
             plugins = plugins.filter(plugin_name=plugin_name)
 
-        traits_required = set(self.metadata.get('traits', []))
-        plugins = [p for p in plugins if p.can_plugin_be_loaded() and not traits_required - set(p.get_plugin().__traits__)]
+        traits_required = set(self.metadata.get("traits", []))
+        plugins = [
+            p
+            for p in plugins
+            if p.can_plugin_be_loaded()
+            and not traits_required - set(p.get_plugin().__traits__)
+        ]
 
         if not plugins:
-            return {
-                'type': 'number',
-                'enum': [0],
-                'enumNames': ['No plugins added'],
-            }
+            return {"type": "number", "enum": [0], "enumNames": ["No plugins added"]}
 
         return {
-            'type': 'number',
-            'enum': [p.pk for p in plugins],
-            'enumNames': [p.get_display_name() for p in plugins],
+            "type": "number",
+            "enum": [p.pk for p in plugins],
+            "enumNames": [p.get_display_name() for p in plugins],
         }
 
-    def _deserialize(self, value, attr, data):
+    def _deserialize(self, value, attr, data, **kwargs):
         from .models import Plugin
-        logger.debug('Trying to resolve related %r' % (value, ))
+
+        logger.debug("Trying to resolve related %r" % (value,))
         try:
             return Plugin.objects.get_plugin(pk=value)
         except Plugin.DoesNotExist:
@@ -117,19 +118,19 @@ class RelatedPluginField(fields.Field):
 
 class DjangoModelField(fields.Field):
     def _jsonschema_type_mapping(self):
-        queryset = self.metadata.get('queryset', [])
-        name_field = self.metadata.get('name_field', 'pk')
+        queryset = self.metadata.get("queryset", [])
+        name_field = self.metadata.get("name_field", "pk")
         objs = [obj for obj in queryset]
 
         return {
-            'type': 'number',
-            'enum': [obj.pk for obj in objs],
-            'enumNames': [getattr(obj, name_field) for obj in objs],
+            "type": "number",
+            "enum": [obj.pk for obj in objs],
+            "enumNames": [getattr(obj, name_field) for obj in objs],
         }
 
-    def _deserialize(self, value, attr, data):
-        queryset = self.metadata.get('queryset', [])
-        logger.debug('Trying to resolve object %r' % (value, ))
+    def _deserialize(self, value, attr, data, **kwargs):
+        queryset = self.metadata.get("queryset", [])
+        logger.debug("Trying to resolve object %r" % (value,))
         try:
             return queryset.get(pk=value)
         except queryset.model.DoesNotExist:

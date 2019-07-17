@@ -1,20 +1,17 @@
 import logging
-
-import wrapt
-
+import threading
 from collections import defaultdict
 
+import wrapt
 from django.conf import settings
 from django.contrib.auth.models import Permission
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
-
 from jsonfield import JSONField
 
 from ..baseplugin import PluginBase
-from ..signals import plugin_loaded, plugin_unloaded
 from ..pluginhandler import pluginhandler
-
+from ..signals import plugin_loaded, plugin_unloaded
 
 logger = logging.getLogger(__name__)
 
@@ -53,13 +50,16 @@ class PluginCache:
         self.plugins_list.remove(plugin)
         del self.plugins[plugin.plugin_type][plugin.name]
 
+
 PLUGIN_CACHE = PluginCache()
+PLUGIN_CREATE_LOCK = threading.Lock()
+PLUGIN_CREATE_LOCKS = {}
 
 
 class PluginProxy(wrapt.ObjectProxy):
     @property
     def __wrapped__(self):
-        plugin_type, name = self.__getattrib__('__wrapped_info__')
+        plugin_type, name = self.__getattrib__("__wrapped_info__")
         key = (plugin_type, name)
         if key in PLUGIN_CACHE:
             return PLUGIN_CACHE.get_plugin_by_keys(plugin_type, name)
@@ -68,26 +68,27 @@ class PluginProxy(wrapt.ObjectProxy):
 
     @__wrapped__.setter
     def __wrapped__(self, value):
-        self.__setattrib__('__wrapped_info__', value.plugin_type, value.name)
+        self.__setattrib__("__wrapped_info__", value.plugin_type, value.name)
 
 
 class PluginManager(models.Manager):
     def bootstrap(self):
-        logger.info('Bootstrapping plugin manager')
+        logger.info("Bootstrapping plugin manager")
         for plugin_type in settings.PLUGIN_INITIALIZATION_ORDER:
             Plugin.objects.initialize_plugins(plugin_type)
 
-        from ..simpleadmin import scan_and_register_simpleadmin_template
-        scan_and_register_simpleadmin_template()
+        # from ..simpleadmin import scan_and_register_simpleadmin_template
+
+        # scan_and_register_simpleadmin_template()
 
     def initialize_plugins(self, plugin_type):
-        logger.info('Initializing plugins of type %r' % (plugin_type, ))
+        logger.info(f"Initializing plugins of type {plugin_type}")
         for plugin in self.model.objects.filter(enabled=True, plugin_type=plugin_type):
-            logger.debug('Initializing plugin %r' % (plugin, ))
+            logger.debug(f"Initializing plugin {plugin}")
             plugin.get_plugin()
 
     def unload_all_plugins(self):
-        logger.info('Unloading all plugins')
+        logger.info("Unloading all plugins")
         for plugin in PLUGIN_CACHE.plugins_list[::-1]:
             plugin._plugin_obj.remove_plugin()
 
@@ -96,7 +97,7 @@ class PluginManager(models.Manager):
     def get_plugin(self, pk):
         plugin = self.model.objects.get(pk=pk)
         if not plugin.enabled:
-            logger.warning('Plugin %r is not enabled' % (plugin.pk), )
+            logger.warning(f"Plugin {plugin.pk} is not enabled")
             return None
 
         return PluginProxy(plugin.get_plugin())
@@ -113,7 +114,7 @@ class PluginManager(models.Manager):
         return [self.get_plugin(p.pk) for p in plugins]
 
 
-class Plugin(models.Model): # TODO: ensure plugin unload / reload is good
+class Plugin(models.Model):  # TODO: ensure plugin unload / reload is good
     name = models.CharField(max_length=50)
     plugin_name = models.CharField(max_length=50)
     plugin_type = models.CharField(max_length=50)
@@ -126,10 +127,33 @@ class Plugin(models.Model): # TODO: ensure plugin unload / reload is good
     objects = PluginManager()
 
     def create_plugin(self):
-        logger.debug('Trying to create plugin from plugin_type:%s and plugin_name:%s' % (self.plugin_type, self.plugin_name, ))
+        PLUGIN_CREATE_LOCK.acquire()
+        if self.pk in PLUGIN_CREATE_LOCKS:
+            l = PLUGIN_CREATE_LOCKS[self.pk]
+            PLUGIN_CREATE_LOCK.release()
+            with l:
+                return
+        else:
+            PLUGIN_CREATE_LOCKS[self.pk] = l = threading.Lock()
+            l.acquire()
+            PLUGIN_CREATE_LOCK.release()
+
+        try:
+            self._create_plugin()
+        finally:
+            with PLUGIN_CREATE_LOCK:
+                del PLUGIN_CREATE_LOCKS[self.pk]
+                l.release()
+
+    def _create_plugin(self):
+        logger.debug(
+            f"Trying to create plugin from plugin_type:{self.plugin_type} and plugin_name:{self.plugin_name}"
+        )
         plugin_class = pluginhandler.get_plugin(self.plugin_type, self.plugin_name)
         if plugin_class is None:
-            logger.debug('Unknown plugin plugin_type:%s and plugin_name:%s' % (self.plugin_type, self.plugin_name, ))
+            logger.debug(
+                f"Unknown plugin plugin_type:{self.plugin_type} and plugin_name:{self.plugin_name}"
+            )
             return None
 
         schema = plugin_class.config_schema()
@@ -137,9 +161,7 @@ class Plugin(models.Model): # TODO: ensure plugin unload / reload is good
         plugin._related_plugins = []
         plugin.name = self.name
 
-        PLUGIN_CACHE.add_plugin(plugin)
-
-        config = schema.load(self.config).data
+        config = schema.load(self.config)
 
         def add_plugin_related(c):
             if isinstance(c, list):
@@ -150,29 +172,32 @@ class Plugin(models.Model): # TODO: ensure plugin unload / reload is good
                     add_plugin_related(v)
             elif isinstance(c, PluginBase):
                 if plugin not in c._related_plugins:
-                    logger.debug('Adding related plugin %r to %r' % (plugin, c))
+                    logger.debug(f"Adding related plugin {plugin} to {c}")
                     c._related_plugins.append(plugin)
 
         add_plugin_related(config)
 
-        logger.debug('Creating plugin %s / %s / %s with config %r / %r' % (self.plugin_type, self.plugin_name, self.name, config, self.config))
+        logger.debug(
+            f"Creating plugin {self.plugin_type} / {self.plugin_name} / {self.name} with config {config} / {self.config}"
+        )
 
         content_type = ContentType.objects.get_for_model(Plugin)
         perm, _ = Permission.objects.get_or_create(
-            codename='%s.%s' % (plugin.plugin_type, plugin.name, ),
+            codename=f"{plugin.plugin_type}.{plugin.name}",
             content_type=content_type,
             defaults={
-                'name': 'Can access plugin_type:%s name:%s' % (plugin.plugin_type, plugin.name, )
-            }
+                "name": f"Can access plugin_type:{plugin.plugin_type} name:{plugin.name}"
+            },
         )
 
         plugin.__init__(config)
         plugin._plugin_obj = self
         plugin._permission = perm
 
-        if hasattr(plugin, 'ready'):
+        if hasattr(plugin, "ready"):
             plugin.ready()
 
+        PLUGIN_CACHE.add_plugin(plugin)
         plugin_loaded.send(sender=self.__class__, plugin=self)
 
     def is_plugin_loaded(self):
@@ -185,7 +210,7 @@ class Plugin(models.Model): # TODO: ensure plugin unload / reload is good
         try:
             self.get_plugin()
         except:
-            logger.exception('Failed to load plugin %r' % (self, ))
+            logger.exception(f"Failed to load plugin {self}")
             return False
         else:
             return True
@@ -202,7 +227,7 @@ class Plugin(models.Model): # TODO: ensure plugin unload / reload is good
 
             plugin_class = pluginhandler.get_plugin(self.plugin_type, self.plugin_name)
             schema = plugin_class.config_schema()
-            config = schema.load(self.config).data
+            config = schema.load(self.config)
 
             def remove_plugin_related(c):
                 if isinstance(c, list):
@@ -221,16 +246,19 @@ class Plugin(models.Model): # TODO: ensure plugin unload / reload is good
             plugin.unload()
 
     def reload_plugin(self):
-        logger.info('Reloading plugin %r' % (self, ))
+        logger.info(f"Reloading plugin {self}")
         self.remove_plugin()
         return self.get_plugin()
 
     def get_display_name(self):
-        return self.config and self.config.get('display_name') or self.name
+        return self.config and self.config.get("display_name") or self.name
 
     class Meta:
-        ordering = ('pk', )
-        unique_together = (('name', 'plugin_type',),)
+        ordering = ("pk",)
+        unique_together = (("name", "plugin_type"),)
+
+    class JSONAPIMeta:
+        resource_name = "plugin"
 
     def __str__(self):
-        return u'%s using %s' % (self.name, self.plugin_type)
+        return f"{self.name} using {self.plugin_type}"
