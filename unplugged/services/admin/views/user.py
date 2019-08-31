@@ -1,16 +1,14 @@
 import logging
 
-from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.models import Permission, User
 from django.contrib.auth.password_validation import validate_password
+from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
-
-from rest_framework import status, permissions, serializers, viewsets
-from rest_framework.response import Response
+from rest_framework import permissions, serializers, status, viewsets
 from rest_framework.decorators import action
+from rest_framework.response import Response
 
 from ....models import Plugin
-
 from .shared import ADMIN_RENDERER_CLASSES, ServiceAwareHyperlinkedIdentityField
 
 logger = logging.getLogger(__name__)

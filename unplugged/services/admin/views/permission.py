@@ -1,10 +1,8 @@
-from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.models import Permission
-
+from django.contrib.contenttypes.models import ContentType
 from rest_framework import permissions, serializers, viewsets
 
 from ....models import Plugin
-
 from .shared import ADMIN_RENDERER_CLASSES, ServiceAwareHyperlinkedIdentityField
 
 

@@ -9,7 +9,6 @@ from ....jsonschema import dump_ui_schema
 from ....libs.marshmallow_jsonschema import JSONSchema
 from ....models import Plugin
 from ....pluginhandler import pluginhandler
-
 from .shared import ADMIN_RENDERER_CLASSES, ServiceAwareHyperlinkedIdentityField
 
 logger = logging.getLogger(__name__)

@@ -1,10 +1,8 @@
 from django.conf.urls import url
-
 from marshmallow import Schema
 
 from ...plugins import ServicePlugin
-
-from .views import AuthView, UserView, LogoutView
+from .views import AuthView, LogoutView, UserView
 
 
 class UserServicePlugin(ServicePlugin):

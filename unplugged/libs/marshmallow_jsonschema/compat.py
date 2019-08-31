@@ -1,4 +1,5 @@
 import sys
+
 import marshmallow
 
 PY2 = int(sys.version_info[0]) == 2

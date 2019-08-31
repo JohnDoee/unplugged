@@ -1,7 +1,6 @@
 from rest_framework import permissions, serializers, viewsets
 
 from ....models import FailedToParseScheduleException, Schedule, parse_schedule_trigger
-
 from .shared import ADMIN_RENDERER_CLASSES
 
 

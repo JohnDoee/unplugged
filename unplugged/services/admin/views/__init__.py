@@ -3,9 +3,9 @@ from .permission import PermissionModelView
 from .plugin import PluginBaseListView, PluginModelView
 from .scheduler import ScheduleModelView
 from .simpleadmin import (
-    SimpleAdminTemplateModelView,
-    SimpleAdminPluginModelView,
     ShowAdminUrlsView,
+    SimpleAdminPluginModelView,
+    SimpleAdminTemplateModelView,
 )
 from .user import UserModelView
 

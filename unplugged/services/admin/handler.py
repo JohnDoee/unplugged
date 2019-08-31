@@ -2,25 +2,22 @@ import copy
 import logging
 
 from django.conf.urls import url
-
+from marshmallow import Schema
 from rest_framework import routers
 
-from marshmallow import Schema
-
-from ...plugins import ServicePlugin
 from ...pluginhandler import pluginhandler
-
-from .models import SimpleAdminTemplate, SimpleAdminPlugin
+from ...plugins import ServicePlugin
+from .models import SimpleAdminPlugin, SimpleAdminTemplate
 from .views import (
+    LogModelView,
     PermissionModelView,
-    PluginModelView,
     PluginBaseListView,
-    UserModelView,
+    PluginModelView,
+    ScheduleModelView,
     ShowAdminUrlsView,
     SimpleAdminPluginModelView,
     SimpleAdminTemplateModelView,
-    LogModelView,
-    ScheduleModelView,
+    UserModelView,
 )
 
 logger = logging.getLogger(__name__)

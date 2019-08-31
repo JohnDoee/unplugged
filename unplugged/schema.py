@@ -1,7 +1,6 @@
 from marshmallow import Schema as OriginalSchema
 from marshmallow import SchemaOpts, fields
 
-
 __all__ = ["Schema", "fields"]
 
 

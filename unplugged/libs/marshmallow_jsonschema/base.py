@@ -3,11 +3,11 @@ import decimal
 import uuid
 from inspect import isclass
 
-from marshmallow import fields, missing, Schema, validate
+from marshmallow import Schema, fields, missing, validate
 from marshmallow.class_registry import get_class
 from marshmallow.decorators import post_dump
 
-from .compat import text_type, binary_type, basestring, dot_data_backwards_compatible
+from .compat import basestring, binary_type, dot_data_backwards_compatible, text_type
 from .validation import handle_length, handle_one_of, handle_range
 
 __all__ = ("JSONSchema",)

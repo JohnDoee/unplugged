@@ -6,13 +6,11 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.urls import path
 from django.utils.text import slugify
-
 from rest_framework.permissions import BasePermission
 
+from ..baseplugin import PluginBase
 from ..routing import register_channels, unregister_channel
 from ..urls import register_urlpatterns, unregister_urlpattern
-
-from ..baseplugin import PluginBase
 
 logger = logging.getLogger(__name__)
 

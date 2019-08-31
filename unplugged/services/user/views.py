@@ -1,11 +1,10 @@
 import logging
 
-from django.contrib.auth import authenticate, login, logout, get_user_model
-
-from rest_framework import status, permissions, serializers
+from django.contrib.auth import authenticate, get_user_model, login, logout
+from rest_framework import permissions, serializers, status
 from rest_framework.authtoken.models import Token
-from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from ...jsonapi import JSONAPIObject, JSONAPIRoot
 

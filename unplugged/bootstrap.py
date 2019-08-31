@@ -5,7 +5,7 @@ from django.contrib.contenttypes.models import ContentType
 from wampyre.realm import realm_manager
 from wampyre.transports.autowamp import ApplicationRunner
 
-from .models import Plugin, LogNotificationComponent
+from .models import LogNotificationComponent, Plugin
 from .scheduler import schedule_manager
 from .signals import wamp_realm_created, wamp_realm_discarded
 
