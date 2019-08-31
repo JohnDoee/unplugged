@@ -2,9 +2,7 @@ import logging
 
 from rest_framework import permissions, serializers, viewsets
 from rest_framework.decorators import action
-from rest_framework.renderers import BrowsableAPIRenderer
 from rest_framework.response import Response
-from rest_framework_json_api.renderers import JSONRenderer
 
 from ....commands import CommandViewMixin
 from ....jsonschema import dump_ui_schema
@@ -12,9 +10,7 @@ from ....libs.marshmallow_jsonschema import JSONSchema
 from ....models import Plugin
 from ....pluginhandler import pluginhandler
 
-from .shared import *
-
-ADMIN_RENDERER_CLASSES = (JSONRenderer, BrowsableAPIRenderer)
+from .shared import ADMIN_RENDERER_CLASSES, ServiceAwareHyperlinkedIdentityField
 
 logger = logging.getLogger(__name__)
 

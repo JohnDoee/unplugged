@@ -1,10 +1,7 @@
 from rest_framework import permissions, serializers, viewsets
-from rest_framework.decorators import action
 from rest_framework.renderers import BrowsableAPIRenderer
-from rest_framework.response import Response
 from rest_framework_json_api.renderers import JSONRenderer
 
-from ..libs.marshmallow_jsonschema import JSONSchema
 from ..models import FailedToParseScheduleException, Schedule, parse_schedule_trigger
 
 ADMIN_RENDERER_CLASSES = (JSONRenderer, BrowsableAPIRenderer)

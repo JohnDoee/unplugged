@@ -1,5 +1,4 @@
 import logging
-import re
 
 from django.conf import settings
 from django.conf.urls import include, url

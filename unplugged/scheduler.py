@@ -64,24 +64,25 @@ class ScheduleManager:
         plugin = schedule.plugin.get_plugin()
         command = plugin.get_command(schedule.command)
         kwargs = schedule.kwargs or {}
-        result = command.parse_kwargs(kwargs)
-        kwargs = result.data
+        kwargs = command.parse_kwargs(kwargs)
         kwargs["self"] = plugin
 
         try:
-            command_result = command.execute(kwargs)
+            _ = command.execute(kwargs)
         except Exception:
             logger.exception(
                 f"Failed to execute {command} with args {kwargs} from schedule"
             )
 
     def start(self):
+        logger.debug("Started schedule manager")
         post_delete.connect(self.schedule_deleted, sender=Schedule)
         post_save.connect(self.schedule_modified, sender=Schedule)
         plugin_loaded.connect(self.plugin_loaded)
         plugin_unloaded.connect(self.plugin_unloaded)
 
     def stop(self):
+        logger.debug("Stopped schedule manager")
         post_delete.disconnect(self.schedule_deleted, sender=Schedule)
         post_save.disconnect(self.schedule_modified, sender=Schedule)
         plugin_loaded.disconnect(self.plugin_loaded)

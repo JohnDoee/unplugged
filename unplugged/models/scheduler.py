@@ -36,6 +36,7 @@ def parse_schedule_trigger(method, config):
         fields = ["weeks", "days", "hours", "minutes", "seconds"]
         try:
             kwargs = dict([c.split("=") for c in config])
+            kwargs = {k: int(v) for (k, v) in kwargs.items()}
         except ValueError:
             raise FailedToParseScheduleException("Failed to parse config")
 
@@ -52,6 +53,53 @@ def parse_schedule_trigger(method, config):
 
     else:
         raise FailedToParseScheduleException(f"Unknown method: {method}")
+
+
+class ScheduleManager(models.Manager):
+    def ensure_schedule(
+        self, method, method_config, command, kwargs, plugin, plugin_unique_id
+    ):
+        if not isinstance(plugin, Plugin):
+            plugin = plugin._plugin_obj
+
+        existing_schedules = self.filter(
+            plugin=plugin, plugin_unique_id=plugin_unique_id
+        )
+        if existing_schedules:
+            existing_schedule = existing_schedules[0]
+            changed = False
+
+            if existing_schedule.method != method:
+                existing_schedule.method = method
+                changed = True
+
+            if existing_schedule.method_config != method_config:
+                existing_schedule.method_config = method_config
+                changed = True
+
+            if existing_schedule.command != command:
+                existing_schedule.command = command
+                changed = True
+
+            if existing_schedule.kwargs != kwargs:
+                existing_schedule.kwargs = kwargs
+                changed = True
+
+            if not existing_schedule.enabled:
+                existing_schedule.enabled = True
+                changed = True
+
+            if changed:
+                existing_schedule.save()
+        else:
+            self.create(
+                method=method,
+                method_config=method_config,
+                command=command,
+                kwargs=kwargs,
+                plugin=plugin,
+                plugin_unique_id=plugin_unique_id,
+            )
 
 
 class Schedule(models.Model):
@@ -71,6 +119,8 @@ class Schedule(models.Model):
     )
 
     enabled = models.BooleanField(default=False)
+
+    objects = ScheduleManager()
 
     def get_trigger(self):
         return parse_schedule_trigger(self.method, self.method_config)

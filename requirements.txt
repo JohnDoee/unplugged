@@ -1,7 +1,7 @@
 marshmallow
 django
-marshmallow-jsonschema
 djangorestframework-jsonapi
 djangorestframework
 wrapt
 jsonfield
+wampyre

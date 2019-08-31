@@ -242,6 +242,7 @@ class Plugin(models.Model):  # TODO: ensure plugin unload / reload is good
 
             remove_plugin_related(config)
 
+            plugin_unloaded.send(sender=self.__class__, plugin=self)
             PLUGIN_CACHE.remove_plugin(plugin)
             plugin.unload()
 

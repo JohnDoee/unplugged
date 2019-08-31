@@ -124,22 +124,6 @@ class AdminService(ServicePlugin):
         super(AdminService, self).__init__(config)
 
     def get_urls(self):
-        # router = ServiceSimpleRouter(service=self)
-
-        # router.register(r'permissions', PermissionModelView, base_name='permission')
-        # router.register(r'plugins', PluginModelView)
-        # router.register(r'pluginbases', PluginBaseListView, base_name='pluginbase')
-        # router.register(r'users', UserModelView)
-        # router.register(r'simpleadminplugins', SimpleAdminPluginModelView, base_name='simpleadmin_plugin')
-        # router.register(r'simpleadmintemplates', SimpleAdminTemplateModelView, base_name='simpleadmin_template')
-        # router.register(r'logentries', LogModelView, base_name='logentry')
-
-        # urls = [
-        #     url(r'^/?$', ShowAdminUrlsView.as_view(urls=router.urls, service=self)),
-        # ] + router.urls
-
-        # return urls
-
         router = ServiceSimpleRouter(service=self)
 
         router.register("logs", LogModelView, base_name="log")
@@ -162,7 +146,7 @@ class AdminService(ServicePlugin):
         router.register("schedules", ScheduleModelView)
 
         return [
-            url(r"^$", ShowAdminUrlsView.as_view(urls=router.urls, service=self))
+            url("^$", ShowAdminUrlsView.as_view(urls=router.urls, service=self))
         ] + router.urls
 
     def unload(self):

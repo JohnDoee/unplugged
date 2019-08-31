@@ -1,15 +1,11 @@
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.models import Permission
 
-from rest_framework.renderers import BrowsableAPIRenderer
-from rest_framework_json_api.renderers import JSONRenderer
-from rest_framework import status, permissions, serializers, viewsets
+from rest_framework import permissions, serializers, viewsets
 
 from ....models import Plugin
 
-from .shared import *
-
-ADMIN_RENDERER_CLASSES = (JSONRenderer, BrowsableAPIRenderer)
+from .shared import ADMIN_RENDERER_CLASSES, ServiceAwareHyperlinkedIdentityField
 
 
 class PermissionSerializer(serializers.HyperlinkedModelSerializer):

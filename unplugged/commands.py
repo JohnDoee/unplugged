@@ -3,7 +3,7 @@ import logging
 from functools import wraps
 
 from django.http import HttpResponse
-from marshmallow import Schema
+from marshmallow import Schema, ValidationError
 from rest_framework import serializers, status
 from rest_framework.response import Response
 
@@ -39,18 +39,18 @@ class CommandViewMixin:
             )
 
         kwargs = serializer.validated_data["kwargs"]
-        result = command.parse_kwargs(kwargs)
-        if result.errors:
+        try:
+            kwargs = command.parse_kwargs(kwargs)
+        except ValidationError as err:
             jsonapi_root = JSONAPIRoot.error_status(
                 id_="invalid_args",
                 detail=f"You provided invalid arguments to the function {command}",
             )
-            jsonapi_root.meta.update(result.errors)
+            jsonapi_root.meta.update(err.messages)
             return Response(
                 jsonapi_root.serialize(request), status=status.HTTP_400_BAD_REQUEST
             )
 
-        kwargs = result.data
         kwargs["self"] = obj
         kwargs.update(additional_kwargs)
         if command.need_request:
@@ -59,7 +59,7 @@ class CommandViewMixin:
         try:
             command_result = command.execute(kwargs)
         except Exception:
-            logger.exception(f"Failed to execute {command} with args {result.data}")
+            logger.exception(f"Failed to execute {command} with args {kwargs}")
             jsonapi_root = JSONAPIRoot.error_status(
                 id_="execution_failed", detail="Failed to execute command"
             )

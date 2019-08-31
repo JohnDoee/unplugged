@@ -1,11 +1,7 @@
 from rest_framework import permissions, serializers, viewsets
-from rest_framework.renderers import BrowsableAPIRenderer
-from rest_framework_json_api.renderers import JSONRenderer
 
 from ....models import Log, LogMessage, Plugin
-from .shared import *
-
-ADMIN_RENDERER_CLASSES = (JSONRenderer, BrowsableAPIRenderer)
+from .shared import ADMIN_RENDERER_CLASSES, ServiceAwareHyperlinkedIdentityField
 
 
 class PluginSerializer(serializers.ModelSerializer):

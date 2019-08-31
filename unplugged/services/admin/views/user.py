@@ -2,16 +2,16 @@ import logging
 
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.models import Permission, User
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError
 
-from rest_framework.renderers import BrowsableAPIRenderer
-from rest_framework_json_api.renderers import JSONRenderer
 from rest_framework import status, permissions, serializers, viewsets
 from rest_framework.response import Response
 from rest_framework.decorators import action
 
 from ....models import Plugin
 
-from .shared import *
+from .shared import ADMIN_RENDERER_CLASSES, ServiceAwareHyperlinkedIdentityField
 
 logger = logging.getLogger(__name__)
 
@@ -65,7 +65,7 @@ class UserModelView(viewsets.ModelViewSet):
         password = serializer.data["password"]
         try:
             validate_password(password, user)
-        except exceptions.ValidationError:
+        except ValidationError:
             return Response(
                 {"message": "Please choose a more complex password."},
                 status=status.HTTP_400_BAD_REQUEST,

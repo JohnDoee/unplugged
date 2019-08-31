@@ -18,8 +18,8 @@ def handle_wampyre_callback(callback_type, realm):
 
 
 def bootstrap_all():
-    Plugin.objects.bootstrap()
     schedule_manager.start()
+    Plugin.objects.bootstrap()
 
     content_type = ContentType.objects.get_for_model(Plugin)
     perm, _ = Permission.objects.get_or_create(

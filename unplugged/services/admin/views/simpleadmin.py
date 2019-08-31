@@ -6,18 +6,14 @@ from django.urls import NoReverseMatch, reverse
 from django.utils.text import slugify
 from rest_framework import permissions, serializers, status, viewsets
 from rest_framework.decorators import action
-from rest_framework.renderers import BrowsableAPIRenderer
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework_json_api.renderers import JSONRenderer
 
-from ....commands import CommandViewMixin
 from ....jsonapi import JSONAPIObject, JSONAPIRoot
 from ....jsonschema import dump_ui_schema
 from ....libs.marshmallow_jsonschema import JSONSchema
 from ..models import NameAlreadyInUseException, SimpleAdminPlugin, SimpleAdminTemplate
-from ....pluginhandler import pluginhandler
-from .shared import *
+from .shared import ADMIN_RENDERER_CLASSES, ServiceAwareHyperlinkedIdentityField
 
 logger = logging.getLogger(__name__)
 

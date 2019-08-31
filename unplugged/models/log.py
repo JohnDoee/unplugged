@@ -15,8 +15,9 @@ logger = logging.getLogger(__name__)
 
 class LogManager(models.Manager):
     def start_chain(self, plugin, action, user=None):
-        if not isinstance(plugin, Plugin):
-            plugin = plugin._plugin_obj
+        if plugin is not None:
+            if not isinstance(plugin, Plugin):
+                plugin = plugin._plugin_obj
         logger.debug(
             f"New log chain started for plugin:{plugin!r} user:{user!r} action:{action}"
         )

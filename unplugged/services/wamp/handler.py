@@ -1,11 +1,7 @@
-import functools
 import logging
-
-from django.urls import path
 
 from marshmallow import Schema
 
-from wampyre.realm import realm_manager
 from wampyre.transports.django import WAMPRouter
 
 from ...plugins import ServicePlugin
@@ -28,22 +24,6 @@ class WAMPServicePlugin(ServicePlugin):
                 },
             )
         ]
-
-    # def realm_authenticator(self, user, realm):
-    #     if not user or not user.is_authenticated():
-    #         logger.info('User not authenticated for realm %s' % (realm, ))
-    #         return False
-
-    #     if not realm.startswith('user.'):
-    #         logger.info('Someone tried to connect to non-user realm %s' % (realm, ))
-    #         return False
-
-    #     realm_user_id = realm[5:]
-    #     if str(user.pk) != realm_user_id:
-    #         logger.info('User %r trying to access realm %s' % (user, realm))
-    #         return False
-
-    #     return True
 
     def realm_authenticator(user, realm):
         if not user or not user.is_authenticated():
