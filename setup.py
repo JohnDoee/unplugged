@@ -8,7 +8,7 @@ with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'requirements
 
 setup(
     name="unplugged",
-    version="0.1.0",
+    version="0.1.1",
     packages=find_packages(),
 
     install_requires=requirements,
