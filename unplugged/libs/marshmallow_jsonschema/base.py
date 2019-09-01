@@ -64,7 +64,6 @@ class JSONSchema(Schema):
                 fields.Dict: dict,
                 fields.Url: text_type,
                 fields.List: list,
-                fields.LocalDateTime: datetime.datetime,
                 fields.Nested: "_from_nested_schema",
             }
         )

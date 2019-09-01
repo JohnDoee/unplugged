@@ -8,8 +8,14 @@ with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'requirements
 
 setup(
     name="unplugged",
-    version="0.1.1",
+    version="0.1.2",
     packages=find_packages(),
+    package_data={
+        '': [
+            'unplugged/fixtures/unplugged-initial.json',
+        ],
+    },
+    include_package_data=True,
 
     install_requires=requirements,
     author="Anders Jensen",
