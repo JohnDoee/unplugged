@@ -8,6 +8,7 @@ from django.contrib.auth.models import Permission
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from jsonfield import JSONField
+from marshmallow import INCLUDE
 
 from ..baseplugin import PluginBase
 from ..pluginhandler import pluginhandler
@@ -161,7 +162,7 @@ class Plugin(models.Model):  # TODO: ensure plugin unload / reload is good
         plugin._related_plugins = []
         plugin.name = self.name
 
-        config = schema.load(self.config)
+        config = schema.load(self.config, unknown=INCLUDE)
 
         def add_plugin_related(c):
             if isinstance(c, list):
@@ -227,7 +228,7 @@ class Plugin(models.Model):  # TODO: ensure plugin unload / reload is good
 
             plugin_class = pluginhandler.get_plugin(self.plugin_type, self.plugin_name)
             schema = plugin_class.config_schema()
-            config = schema.load(self.config)
+            config = schema.load(self.config, unknown=INCLUDE)
 
             def remove_plugin_related(c):
                 if isinstance(c, list):

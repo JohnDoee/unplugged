@@ -29,6 +29,7 @@ def register_simpleadmin_template(plugin_base, template):
         display_name = "Default"
         template_id = "default"
         simpleadmin_template = True
+        modify_key = None
         update_method = SimpleAdminTemplate.UPDATE_METHOD_FULL
     else:
         description = template.get("description", "No description found")
@@ -36,6 +37,11 @@ def register_simpleadmin_template(plugin_base, template):
         display_name = template.get("display_name", f"Template {template_id}")
         simpleadmin_template = template["template"]
         update_method = template["update_method"]
+        modify_key = template.get("modify_key")
+
+    if update_method == SimpleAdminTemplate.UPDATE_METHOD_MODIFY_KEY and not modify_key:
+        logger.warning(f"Bogus template {template_id}")
+        return
 
     try:
         sat = SimpleAdminTemplate.objects.get(
@@ -59,6 +65,7 @@ def register_simpleadmin_template(plugin_base, template):
     sat.display_name = display_name
     sat.template = simpleadmin_template
     sat.update_method = update_method
+    sat.modify_key = modify_key
 
     sat.save()
 

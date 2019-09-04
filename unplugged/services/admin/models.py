@@ -17,8 +17,8 @@ class NameAlreadyInUseException(Exception):
     pass
 
 
-def key_name_in_use(plugin, name):
-    names = set([item["name"] for item in plugin.config.get(plugin.modify_key, [])])
+def key_name_in_use(plugin, modify_key, name):
+    names = set([item["name"] for item in plugin.config.get(modify_key, [])])
     return name in names or slugify(name) in names
 
 
@@ -199,8 +199,10 @@ class SimpleAdminTemplate(models.Model):
             else:
                 plugin = plugins[0]
 
-            if key_name_in_use(plugin, name):
+            if key_name_in_use(plugin, self.modify_key, name):
                 raise NameAlreadyInUseException(f"Name {name} is already used")
+        else:
+            raise Exception(f'Unknown update method {self.update_method}')
 
         sap = SimpleAdminPlugin.objects.create(template=self, name=name, plugin=plugin)
 
@@ -308,7 +310,7 @@ class SimpleAdminPlugin(models.Model):
                 except Plugin.DoesNotExist:
                     pass
             elif self.template.update_method == self.template.UPDATE_METHOD_MODIFY_KEY:
-                if key_name_in_use(self.plugin, name):
+                if key_name_in_use(self.plugin, self.template.modify_key, name):
                     raise NameAlreadyInUseException(
                         f"Unable to save because name {name} is already used"
                     )
@@ -480,13 +482,13 @@ class SimpleAdminPlugin(models.Model):
         data = {}
 
         if self.template.update_method == self.template.UPDATE_METHOD_FULL:
-            data = schema().dump(config).data
+            data = schema().dump(config)
         elif self.template.update_method == self.template.UPDATE_METHOD_MODIFY_KEY:
             for item in config.get(self.template.modify_key, []):
                 if item["name"] == self.name:
                     item = dict(item)
                     item[self.template.modify_key] = self.plugin.pk
-                    data = schema().dump(item).data
+                    data = schema().dump(item)
 
         for key in self.template.get_injectable_plugin_fields():
             if key in self.config:

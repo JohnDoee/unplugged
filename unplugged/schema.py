@@ -1,8 +1,7 @@
 from marshmallow import Schema as OriginalSchema
-from marshmallow import SchemaOpts, fields
+from marshmallow import SchemaOpts, fields, ValidationError, INCLUDE
 
-__all__ = ["Schema", "fields"]
-
+__all__ = ["Schema", "fields", "ValidationError"]
 
 class UISchemaOpts(SchemaOpts):
     def __init__(self, meta, **kwargs):
@@ -12,3 +11,5 @@ class UISchemaOpts(SchemaOpts):
 
 class Schema(OriginalSchema):
     OPTIONS_CLASS = UISchemaOpts
+
+Schema.Meta.unknown = INCLUDE

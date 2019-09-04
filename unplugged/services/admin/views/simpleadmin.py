@@ -4,6 +4,7 @@ from django.http import Http404
 from django.shortcuts import get_object_or_404
 from django.urls import NoReverseMatch, reverse
 from django.utils.text import slugify
+from marshmallow import INCLUDE
 from rest_framework import permissions, serializers, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -12,6 +13,7 @@ from rest_framework.views import APIView
 from ....jsonapi import JSONAPIObject, JSONAPIRoot
 from ....jsonschema import dump_ui_schema
 from ....libs.marshmallow_jsonschema import JSONSchema
+from ....schema import ValidationError
 from ..models import NameAlreadyInUseException, SimpleAdminPlugin, SimpleAdminTemplate
 from .shared import ADMIN_RENDERER_CLASSES, ServiceAwareHyperlinkedIdentityField
 
@@ -190,9 +192,10 @@ class SimpleAdminPluginModelView(viewsets.ModelViewSet):
         template = get_object_or_404(
             SimpleAdminTemplate, pk=serializer.initial_data["template_id"]
         )
-        result = template.config_schema().load(serializer.initial_data["config"])
-        if result.errors:
-            return Response(result.errors, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            _ = template.config_schema().load(serializer.initial_data["config"], unknown=INCLUDE)
+        except ValidationError as err:
+            return Response(err.messages, status=status.HTTP_400_BAD_REQUEST)
 
         name = self.generate_name(serializer)
 
@@ -216,9 +219,10 @@ class SimpleAdminPluginModelView(viewsets.ModelViewSet):
 
     def perform_update(self, serializer):
         sap = serializer.instance
-        result = sap.template.config_schema().load(serializer.initial_data["config"])
-        if result.errors:
-            return Response(result.errors, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            _ = sap.template.config_schema().load(serializer.initial_data["config"], unknown=INCLUDE)
+        except ValidationError as err:
+            return Response(err.messages, status=status.HTTP_400_BAD_REQUEST)
 
         name = self.generate_name(serializer)
         if sap.name != name:

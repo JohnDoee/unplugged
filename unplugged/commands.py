@@ -3,7 +3,7 @@ import logging
 from functools import wraps
 
 from django.http import HttpResponse
-from marshmallow import Schema, ValidationError
+from marshmallow import Schema, ValidationError, INCLUDE
 from rest_framework import serializers, status
 from rest_framework.response import Response
 
@@ -135,7 +135,7 @@ class Command:
         self.need_request = need_request
 
     def parse_kwargs(self, kwargs):
-        return self.schema().load(kwargs)
+        return self.schema().load(kwargs, unknown=INCLUDE)
 
     def execute(self, kwargs):
         try:
