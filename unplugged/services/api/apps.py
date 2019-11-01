@@ -7,4 +7,4 @@ class AppConfig(DjangoAppConfig):
     label = "services_api"
 
     def ready(self):
-        from .handler import APIConfigService  # NOQA
+        from .handler import APIServicePlugin  # NOQA

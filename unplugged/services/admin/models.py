@@ -55,7 +55,6 @@ class SimpleAdminTemplate(models.Model):
             return Schema
 
         schema = plugin.config_schema
-
         if self.update_method == self.UPDATE_METHOD_MODIFY_KEY:
             schema = schema._declared_fields[self.modify_key].nested
 
@@ -202,7 +201,7 @@ class SimpleAdminTemplate(models.Model):
             if key_name_in_use(plugin, self.modify_key, name):
                 raise NameAlreadyInUseException(f"Name {name} is already used")
         else:
-            raise Exception(f'Unknown update method {self.update_method}')
+            raise Exception(f"Unknown update method {self.update_method}")
 
         sap = SimpleAdminPlugin.objects.create(template=self, name=name, plugin=plugin)
 
@@ -315,8 +314,15 @@ class SimpleAdminPlugin(models.Model):
                         f"Unable to save because name {name} is already used"
                     )
 
-        should_reload = False
+        plugin_cls = pluginhandler.get_plugin(
+            self.template.plugin_type, self.template.plugin_name
+        )
+        schema = plugin_cls.config_schema
+        if self.template.update_method == self.template.UPDATE_METHOD_MODIFY_KEY:
+            schema = schema._declared_fields[self.template.modify_key].nested
+        filled_form_data.update(schema().dump(filled_form_data))
 
+        should_reload = False
         if self.template.update_method == self.template.UPDATE_METHOD_FULL:
             logger.debug(f"Doing a full fill of form data to {self.plugin} from {self}")
             self.plugin.config = filled_form_data

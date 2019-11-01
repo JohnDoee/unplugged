@@ -46,5 +46,17 @@
     },
     "model": "unplugged.plugin",
     "pk": 4
+  },
+  {
+    "fields": {
+      "enabled": true,
+      "config": "{}",
+      "name": "staticurls",
+      "plugin_name": "staticurls",
+      "plugin_type": "service",
+      "last_update": "2017-01-01T00:00:00.000Z"
+    },
+    "model": "unplugged.plugin",
+    "pk": 5
   }
 ]

@@ -5,7 +5,7 @@ from ...plugins import ServicePlugin
 from .views import APIConfigView
 
 
-class APIConfigService(ServicePlugin):
+class APIServicePlugin(ServicePlugin):
     plugin_name = "api"
     config_schema = Schema
 

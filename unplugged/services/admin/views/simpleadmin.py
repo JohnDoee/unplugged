@@ -193,7 +193,9 @@ class SimpleAdminPluginModelView(viewsets.ModelViewSet):
             SimpleAdminTemplate, pk=serializer.initial_data["template_id"]
         )
         try:
-            _ = template.config_schema().load(serializer.initial_data["config"], unknown=INCLUDE)
+            _ = template.config_schema().load(
+                serializer.initial_data["config"], unknown=INCLUDE
+            )
         except ValidationError as err:
             return Response(err.messages, status=status.HTTP_400_BAD_REQUEST)
 
@@ -220,7 +222,9 @@ class SimpleAdminPluginModelView(viewsets.ModelViewSet):
     def perform_update(self, serializer):
         sap = serializer.instance
         try:
-            _ = sap.template.config_schema().load(serializer.initial_data["config"], unknown=INCLUDE)
+            _ = sap.template.config_schema().load(
+                serializer.initial_data["config"], unknown=INCLUDE
+            )
         except ValidationError as err:
             return Response(err.messages, status=status.HTTP_400_BAD_REQUEST)
 

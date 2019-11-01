@@ -59,6 +59,9 @@ class JSONAPIObject(dict):
                 if url:
                     links["self"] = url
 
+        if isinstance(links.get("self"), str) and links["self"].startswith("/"):
+            links["self"] = request.build_absolute_uri(links["self"])
+
         if self._original_object and hasattr(
             self._original_object, "get_additional_urls"
         ):
