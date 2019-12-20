@@ -1,9 +1,8 @@
 import logging
 
-from marshmallow import Schema
-
 from wampyre.transports.django import WAMPRouter
 
+from ...schema import Schema
 from ...plugins import ServicePlugin
 
 logger = logging.getLogger(__name__)

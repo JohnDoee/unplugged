@@ -1,9 +1,8 @@
 import logging
 from abc import ABCMeta, abstractproperty
 
-from marshmallow import fields
-
 from .commands import CommandBaseMeta
+from .schema import fields
 from .pluginhandler import pluginhandler
 
 logger = logging.getLogger(__name__)

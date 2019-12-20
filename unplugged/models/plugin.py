@@ -253,7 +253,13 @@ class Plugin(models.Model):  # TODO: ensure plugin unload / reload is good
         return self.get_plugin()
 
     def get_display_name(self):
-        return self.config and self.config.get("display_name") or self.name
+        saps = self.simpleadminplugin_set.all()
+        if self.config and self.config.get("display_name"):
+            return self.config.get("display_name")
+        elif saps and saps[0].get_display_name():
+            return saps[0].get_display_name()
+        else:
+            return self.name
 
     class Meta:
         ordering = ("pk",)

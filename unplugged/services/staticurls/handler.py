@@ -1,9 +1,9 @@
 import logging
 
 from django.urls import include, path
-from marshmallow import Schema
 
 from ...jsonapi import JSONAPIObject, JSONAPIRoot
+from ...schema import Schema
 from ...pluginhandler import pluginhandler
 from ...plugins import ServicePlugin
 from .views import StaticUrlsView

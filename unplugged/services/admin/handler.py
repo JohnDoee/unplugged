@@ -2,9 +2,9 @@ import copy
 import logging
 
 from django.conf.urls import url
-from marshmallow import Schema
 from rest_framework import routers
 
+from ...schema import Schema
 from ...pluginhandler import pluginhandler
 from ...plugins import ServicePlugin
 from .models import SimpleAdminPlugin, SimpleAdminTemplate
@@ -34,7 +34,7 @@ def register_simpleadmin_template(plugin_base, template):
     else:
         description = template.get("description", "No description found")
         template_id = template["id"]
-        display_name = template.get("display_name", f"Template {template_id}")
+        display_name = template.get("display_name", template_id)
         simpleadmin_template = template["template"]
         update_method = template["update_method"]
         modify_key = template.get("modify_key")
@@ -130,21 +130,21 @@ class AdminService(ServicePlugin):
     def get_urls(self):
         router = ServiceSimpleRouter(service=self)
 
-        router.register("logs", LogModelView, base_name="log")
+        router.register("logs", LogModelView, basename="log")
 
-        router.register("permissions", PermissionModelView, base_name="permission")
-        router.register("users", UserModelView, base_name="user")
-        router.register("plugins", PluginModelView, base_name="plugin")
-        router.register("pluginbases", PluginBaseListView, base_name="pluginbase")
+        router.register("permissions", PermissionModelView, basename="permission")
+        router.register("users", UserModelView, basename="user")
+        router.register("plugins", PluginModelView, basename="plugin")
+        router.register("pluginbases", PluginBaseListView, basename="pluginbase")
         router.register(
             "simpleadminplugins",
             SimpleAdminPluginModelView,
-            base_name="simpleadmin_plugin",
+            basename="simpleadmin_plugin",
         )
         router.register(
             "simpleadmintemplates",
             SimpleAdminTemplateModelView,
-            base_name="simpleadmin_template",
+            basename="simpleadmin_template",
         )
 
         router.register("schedules", ScheduleModelView)

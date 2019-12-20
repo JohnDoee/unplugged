@@ -1,4 +1,4 @@
-from marshmallow import fields
+from .schema import fields
 
 
 def dump_ui_schema(obj):

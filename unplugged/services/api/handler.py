@@ -1,6 +1,6 @@
 from django.conf.urls import url
-from marshmallow import Schema
 
+from ...schema import Schema
 from ...plugins import ServicePlugin
 from .views import APIConfigView
 

@@ -131,7 +131,7 @@ class SimpleAdminTemplate(models.Model):
                 # schema_keys['name'] = fields.String(required=True, pattern=r'^[a-z0-9]+(?:[-_][a-z0-9]+)*$', ui_schema={'ui:title': 'Name'})
                 schema_keys["display_name"] = fields.String(
                     required=True,
-                    default="New unsaved plugin",
+                    default="",
                     ui_schema={"ui:title": "Name"},
                 )
                 ui_schema["ui:order"].insert(0, "display_name")

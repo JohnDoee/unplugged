@@ -3,12 +3,12 @@ import logging
 from functools import wraps
 
 from django.http import HttpResponse
-from marshmallow import INCLUDE, Schema, ValidationError
 from rest_framework import serializers, status
 from rest_framework.response import Response
 
 from .jsonapi import JSONAPIObject, JSONAPIRoot
 from .jsonschema import dump_ui_schema
+from .schema import Schema, ValidationError, INCLUDE
 from .libs.marshmallow_jsonschema import JSONSchema
 
 logger = logging.getLogger(__name__)
