@@ -12,7 +12,7 @@ from .libs.marshmallow_jsonschema import JSONSchema
 from .pluginhandler import pluginhandler
 from .plugins import CascadingPermission, DefaultPermission, ServicePlugin
 from .schema import Schema, fields
-from .utils import deferToThreadWrapper
+from .utils import threadify
 
 __all__ = [
     "DjangoModelField",
@@ -33,5 +33,5 @@ __all__ = [
     "Schema",
     "fields",
     "JSONSchema",
-    "deferToThreadWrapper",
+    "threadify",
 ]
