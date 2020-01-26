@@ -39,7 +39,7 @@ class PluginBaseSerializer(serializers.Serializer):
 
         return json_schema.dump(schema)
 
-    def get_ui_schema(self, obj): # TODO: need to fix invalid ui schemas.
+    def get_ui_schema(self, obj):  # TODO: need to fix invalid ui schemas.
         return {}
         # schema = obj.config_schema()
         # return dump_ui_schema(schema)

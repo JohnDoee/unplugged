@@ -1,10 +1,9 @@
 import re
 
-from django.db import models
-from jsonfield import JSONField
-
 from apscheduler.triggers.cron import CronTrigger
 from apscheduler.triggers.interval import IntervalTrigger
+from django.db import models
+from jsonfield import JSONField
 
 from .plugin import Plugin
 

@@ -2,8 +2,8 @@ import logging
 from abc import ABCMeta, abstractproperty
 
 from .commands import CommandBaseMeta
-from .schema import fields
 from .pluginhandler import pluginhandler
+from .schema import fields
 
 logger = logging.getLogger(__name__)
 

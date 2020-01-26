@@ -3,9 +3,9 @@ import logging
 from django.urls import include, path
 
 from ...jsonapi import JSONAPIObject, JSONAPIRoot
-from ...schema import Schema
 from ...pluginhandler import pluginhandler
 from ...plugins import ServicePlugin
+from ...schema import Schema
 from .views import StaticUrlsView
 
 logger = logging.getLogger(__name__)

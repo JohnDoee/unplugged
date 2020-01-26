@@ -2,8 +2,8 @@ import logging
 
 from wampyre.transports.django import WAMPRouter
 
-from ...schema import Schema
 from ...plugins import ServicePlugin
+from ...schema import Schema
 
 logger = logging.getLogger(__name__)
 

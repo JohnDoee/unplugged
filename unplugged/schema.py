@@ -1,5 +1,6 @@
+from marshmallow import INCLUDE
 from marshmallow import Schema as OriginalSchema
-from marshmallow import INCLUDE, SchemaOpts, ValidationError, fields
+from marshmallow import SchemaOpts, ValidationError, fields
 
 __all__ = ["INCLUDE", "Schema", "fields", "ValidationError"]
 

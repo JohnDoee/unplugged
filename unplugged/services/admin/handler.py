@@ -4,9 +4,9 @@ import logging
 from django.conf.urls import url
 from rest_framework import routers
 
-from ...schema import Schema
 from ...pluginhandler import pluginhandler
 from ...plugins import ServicePlugin
+from ...schema import Schema
 from .models import SimpleAdminPlugin, SimpleAdminTemplate
 from .views import (
     LogModelView,

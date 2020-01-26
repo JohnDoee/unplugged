@@ -1,8 +1,8 @@
 import queue
 import time
-import wrapt
-
 from threading import Thread
+
+import wrapt
 
 
 def threadify(fn, cache_result=False, delay=0):
@@ -20,9 +20,10 @@ def threadify(fn, cache_result=False, delay=0):
     def inner(*args, **kwargs):
         t = Thread(target=thread, args=args, kwargs=kwargs)
         t.start()
+
         def innerinner():
             return q.get()
+
         return innerinner
 
     return inner
-

@@ -1,7 +1,7 @@
 from django.conf.urls import url
 
-from ...schema import Schema
 from ...plugins import ServicePlugin
+from ...schema import Schema
 from .views import AuthView, LogoutView, UserView
 
 

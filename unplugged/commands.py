@@ -8,8 +8,8 @@ from rest_framework.response import Response
 
 from .jsonapi import JSONAPIObject, JSONAPIRoot
 from .jsonschema import dump_ui_schema
-from .schema import Schema, ValidationError, INCLUDE
 from .libs.marshmallow_jsonschema import JSONSchema
+from .schema import INCLUDE, Schema, ValidationError
 
 logger = logging.getLogger(__name__)
 
