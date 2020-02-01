@@ -18,7 +18,7 @@ def threadify(fn, cache_result=False, delay=0):
             q.put(r)
 
     def inner(*args, **kwargs):
-        t = Thread(target=thread, args=args, kwargs=kwargs)
+        t = Thread(target=thread, args=args, kwargs=kwargs, daemon=True)
         t.start()
 
         def innerinner():
