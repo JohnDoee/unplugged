@@ -8,7 +8,7 @@ with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'requirements
 
 setup(
     name="unplugged",
-    version="0.1.7",
+    version="0.1.8",
     packages=find_packages(),
     package_data={
         '': [
@@ -19,7 +19,7 @@ setup(
 
     install_requires=requirements,
     author="Anders Jensen",
-    author_email="johndoee@tidalstream.org",
+    author_email="johndoee@tridentstream.org",
     description="Django based plugin system",
     license="MIT",
     url="https://github.com/JohnDoee/unplugged",
