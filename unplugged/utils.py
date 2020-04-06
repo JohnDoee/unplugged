@@ -2,8 +2,6 @@ import queue
 import time
 from threading import Thread
 
-import wrapt
-
 
 def threadify(fn, cache_result=False, delay=0):
     if cache_result:

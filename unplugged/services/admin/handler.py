@@ -9,6 +9,8 @@ from ...plugins import ServicePlugin
 from ...schema import Schema
 from .models import SimpleAdminPlugin, SimpleAdminTemplate
 from .views import (
+    ExternalPluginModelView,
+    LoadedPluginView,
     LogModelView,
     PermissionModelView,
     PluginBaseListView,
@@ -148,6 +150,11 @@ class AdminService(ServicePlugin):
         )
 
         router.register("schedules", ScheduleModelView)
+
+        router.register(
+            "externalplugins", ExternalPluginModelView, basename="externalplugin"
+        )
+        router.register("loadedplugins", LoadedPluginView, basename="loadedplugin")
 
         return [
             url("^$", ShowAdminUrlsView.as_view(urls=router.urls, service=self))

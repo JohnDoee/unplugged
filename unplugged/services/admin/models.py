@@ -1,6 +1,9 @@
 import copy
 import logging
+import shutil
+from pathlib import Path
 
+from django.conf import settings
 from django.db import models
 from django.utils.text import slugify
 from jsonfield import JSONField
@@ -519,3 +522,29 @@ class SimpleAdminPlugin(models.Model):
 
     def __str__(self):
         return f"SimpleAdminPlugin {self.name}"
+
+
+class ExternalPlugin(models.Model):
+    name = models.CharField(max_length=150, null=True)
+    version = models.CharField(max_length=30, null=True)
+    description = models.TextField(null=True)
+    keywords = JSONField(default=list, blank=True)
+    plugin_file = models.FileField(upload_to="externalplugins/")
+
+    created = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"ExternalPlugin {self.name} ({self.plugin_file.name})"
+
+    def install(self):
+        package_root = Path(settings.PACKAGE_ROOT)
+        if not settings.PACKAGE_ROOT or not package_root.is_dir():
+            return "Faild to install, package root does not exist"
+
+        source = Path(self.plugin_file.path)
+        destination = package_root / Path(self.plugin_file.name).name
+
+        if destination.exists():
+            return "Failed to install, plugin already installed"
+
+        shutil.copy(source, destination)

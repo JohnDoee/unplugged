@@ -58,9 +58,11 @@ PLUGIN_CREATE_LOCKS = {}
 
 
 class PluginProxy(wrapt.ObjectProxy):
+    _self_wrapped_info = None
+
     @property
     def __wrapped__(self):
-        plugin_type, name = self.__getattrib__("__wrapped_info__")
+        plugin_type, name = self._self_wrapped_info
         key = (plugin_type, name)
         if key in PLUGIN_CACHE:
             return PLUGIN_CACHE.get_plugin_by_keys(plugin_type, name)
@@ -69,7 +71,7 @@ class PluginProxy(wrapt.ObjectProxy):
 
     @__wrapped__.setter
     def __wrapped__(self, value):
-        self.__setattrib__("__wrapped_info__", value.plugin_type, value.name)
+        self._self_wrapped_info = (value.plugin_type, value.name)
 
 
 class PluginManager(models.Manager):
@@ -77,10 +79,6 @@ class PluginManager(models.Manager):
         logger.info("Bootstrapping plugin manager")
         for plugin_type in settings.PLUGIN_INITIALIZATION_ORDER:
             Plugin.objects.initialize_plugins(plugin_type)
-
-        # from ..simpleadmin import scan_and_register_simpleadmin_template
-
-        # scan_and_register_simpleadmin_template()
 
     def initialize_plugins(self, plugin_type):
         logger.info(f"Initializing plugins of type {plugin_type}")
@@ -102,6 +100,9 @@ class PluginManager(models.Manager):
             return None
 
         return PluginProxy(plugin.get_plugin())
+
+    def get_all_loaded_plugins(self):
+        return PLUGIN_CACHE.plugins_list
 
     def get_plugin_by_name(self, plugin_type, name):
         plugin = self.model.objects.get(plugin_type=plugin_type, name=name)

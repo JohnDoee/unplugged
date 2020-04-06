@@ -1,3 +1,4 @@
+from .externalplugin import ExternalPluginModelView, LoadedPluginView
 from .log import LogModelView
 from .permission import PermissionModelView
 from .plugin import PluginBaseListView, PluginModelView
@@ -19,4 +20,6 @@ __all__ = [
     "SimpleAdminPluginModelView",
     "ShowAdminUrlsView",
     "UserModelView",
+    "ExternalPluginModelView",
+    "LoadedPluginView",
 ]
