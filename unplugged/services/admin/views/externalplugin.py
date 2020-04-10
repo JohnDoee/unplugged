@@ -298,7 +298,7 @@ class LoadedPluginView(viewsets.ViewSet):
             )
 
         subprocess.check_call(
-            [sys.executable, "-m", "pip", "uninstall", "-y", "--verbose", plugin.pk]
+            [sys.executable, "-m", "pip", "uninstall", "-y", "--quiet", plugin.pk]
         )
         if not plugin.orphaned and plugin.filename:
             p = Path(settings.PACKAGE_ROOT) / plugin.filename

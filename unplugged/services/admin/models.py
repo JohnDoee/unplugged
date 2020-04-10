@@ -1,6 +1,8 @@
 import copy
 import logging
 import shutil
+import subprocess
+import sys
 from pathlib import Path
 
 from django.conf import settings
@@ -548,3 +550,7 @@ class ExternalPlugin(models.Model):
             return "Failed to install, plugin already installed"
 
         shutil.copy(source, destination)
+
+        subprocess.check_call(
+            [sys.executable, "-m", "pip", "install", "--quiet", str(destination)]
+        )
